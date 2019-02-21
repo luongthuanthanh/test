@@ -1,0 +1,390 @@
+var commonHelper = new function () {
+    function redirect(url) {
+        var ua = navigator.userAgent.toLowerCase(),
+            isIE = ua.indexOf('msie') !== -1,
+            version = parseInt(ua.substr(4, 2), 10);
+
+        // Internet Explorer 8 and lower
+        if (isIE && version < 9) {
+            var link = document.createElement('a');
+            link.href = url;
+            document.body.appendChild(link);
+            link.click();
+        }
+
+        // All other browsers can use the standard window.location.href (they don't lose HTTP_REFERER like Internet Explorer 8 & lower does)
+        else {
+            window.location.href = url;
+        }
+    }
+
+    return {
+        Redirect: redirect
+    };
+};
+
+function showLoadingBarModal() {
+    waitingDialog.show();
+}
+
+function hideLoadingBarModal() {
+    waitingDialog.hide();
+}
+
+var waitingDialog = waitingDialog || (function ($) {
+    'use strict';
+
+    // Creating modal dialog's DOM
+    var $dialog = $(
+        '<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
+        '<div class="modal-dialog modal-m" style="width: 97px">' +
+        '<div class="modal-content">' +
+        '<div class="modal-header" style="display: none;"><h3 style="margin:0;"></h3></div>' +
+        '<div class="modal-body">' +
+
+        //'<div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>' +
+
+        '<div>' +
+            '<i class="fa fa-circle-o-notch fa-spin fa-4x fa-fw" style="display:block; margin:auto; width: 56px"></i>' +
+        '</div>' +
+
+        '</div>' +
+        '</div></div></div>');
+
+    return {
+        /**
+		 * Opens our dialog
+		 * @param message Custom message
+		 * @param options Custom options:
+		 * 				  options.dialogSize - bootstrap postfix for dialog size, e.g. "sm", "m";
+		 * 				  options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
+		 */
+        show: function (message, options) {
+            // Assigning defaults
+            if (typeof options === 'undefined') {
+                options = {};
+            }
+            if (typeof message === 'undefined') {
+                message = '';
+            }
+            var settings = $.extend({
+                dialogSize: 'm',
+                progressType: '',
+                onHide: null // This callback runs after the dialog was hidden
+            }, options);
+
+            // Configuring dialog
+            $dialog.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
+            $dialog.find('.progress-bar').attr('class', 'progress-bar');
+            if (settings.progressType) {
+                $dialog.find('.progress-bar').addClass('progress-bar-' + settings.progressType);
+            }
+            $dialog.find('h3').text(message);
+            // Adding callbacks
+            if (typeof settings.onHide === 'function') {
+                $dialog.off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
+                    settings.onHide.call($dialog);
+                });
+            }
+            // Opening dialog
+            $dialog.modal("show");
+        },
+        /**
+		 * Closes dialog
+		 */
+        hide: function () {
+            $dialog.modal("hide");
+        }
+    };
+
+})(jQuery);
+
+/*BEGIN function for Bootstrap alert*/
+function BootstrapAlert(options) {
+    var deferredObject = $.Deferred();
+    var defaults = {
+        type: "alert", //alert, prompt,confirm 
+        modalSize: 'modal-sm', //modal-sm, modal-lg
+        okButtonText: 'Ok',
+        cancelButtonText: 'Cancel',
+        yesButtonText: 'Yes',
+        noButtonText: 'No',
+        headerText: 'Attention',
+        messageText: 'Message',
+        alertType: 'default', //default, primary, success, info, warning, danger
+        inputFieldType: 'text', //could ask for number,email,etc
+    }
+    $.extend(defaults, options);
+
+    var _show = function () {
+        var headClass = "navbar-default";
+        switch (defaults.alertType) {
+            case "primary":
+                headClass = "alert-primary";
+                break;
+            case "success":
+                headClass = "alert-success";
+                break;
+            case "info":
+                headClass = "alert-info";
+                break;
+            case "warning":
+                headClass = "alert-warning";
+                break;
+            case "danger":
+                headClass = "alert-danger";
+                break;
+        }
+        $('BODY').append(
+            '<div id="ezAlerts" class="modal fade">' +
+            '<div class="modal-dialog" class="' + defaults.modalSize + '">' +
+            '<div class="modal-content" style="padding-left: 0px;">' +
+            '<div id="ezAlerts-header" class="modal-header ' + headClass + '">' +
+            '<button id="close-button" type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>' +
+            '<h4 id="ezAlerts-title" class="modal-title">Modal title</h4>' +
+            '</div>' +
+            '<div id="ezAlerts-body" class="modal-body">' +
+            '<div id="ezAlerts-message" ></div>' +
+            '</div>' +
+            '<div id="ezAlerts-footer" class="modal-footer">' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>'
+        );
+
+        $('.modal-header').css({
+            'padding': '15px 15px',
+            '-webkit-border-top-left-radius': '5px',
+            '-webkit-border-top-right-radius': '5px',
+            '-moz-border-radius-topleft': '5px',
+            '-moz-border-radius-topright': '5px',
+            'border-top-left-radius': '5px',
+            'border-top-right-radius': '5px'
+        });
+
+        $('#ezAlerts-title').text(defaults.headerText);
+        $('#ezAlerts-message').html(defaults.messageText);
+
+        var keyb = "false", backd = "static";
+        var calbackParam = "";
+        switch (defaults.type) {
+            case 'alert':
+                keyb = "true";
+                backd = "true";
+                $('#ezAlerts-footer').html('<button class="btn btn-' + defaults.alertType + '">' + defaults.okButtonText + '</button>').on('click', ".btn", function () {
+                    calbackParam = true;
+                    $('#ezAlerts').modal('hide');
+                });
+                break;
+            case 'confirm':
+                var btnhtml = '<button id="ezok-btn" class="btn btn-primary">' + defaults.yesButtonText + '</button>';
+                if (defaults.noButtonText && defaults.noButtonText.length > 0) {
+                    btnhtml += '<button id="ezclose-btn" class="btn btn-default">' + defaults.noButtonText + '</button>';
+                }
+                $('#ezAlerts-footer').html(btnhtml).on('click', 'button', function (e) {
+                    if (e.target.id === 'ezok-btn') {
+                        calbackParam = true;
+                        $('#ezAlerts').modal('hide');
+                    } else if (e.target.id === 'ezclose-btn') {
+                        calbackParam = false;
+                        $('#ezAlerts').modal('hide');
+                    }
+                });
+                break;
+            case 'prompt':
+                $('#ezAlerts-message').html(defaults.messageText + '<br /><br /><div class="form-group"><input type="' + defaults.inputFieldType + '" class="form-control" id="prompt" /></div>');
+                $('#ezAlerts-footer').html('<button class="btn btn-primary">' + defaults.okButtonText + '</button>').on('click', ".btn", function () {
+                    calbackParam = $('#prompt').val();
+                    $('#ezAlerts').modal('hide');
+                });
+                break;
+        }
+
+        $('#ezAlerts').modal({
+            show: false,
+            backdrop: backd,
+            keyboard: keyb
+        }).on('hidden.bs.modal', function (e) {
+            $('#ezAlerts').remove();
+            deferredObject.resolve(calbackParam);
+        }).on('shown.bs.modal', function (e) {
+            if ($('#prompt').length > 0) {
+                $('#prompt').focus();
+            }
+        }).modal('show');
+    }
+
+    _show();
+    return deferredObject.promise();
+}
+
+/****BEGIN Example for bootstrap alert****/
+/*$(document).ready(function () {
+    $("#btnAlert").on("click", function () {
+        var prom = BootstrapAlert({
+            messageText: "hello world",
+            alertType: "danger"
+        }).done(function (e) {
+            $("body").append('<div>Callback from alert</div>');
+        });
+    });
+
+    $("#btnConfirm").on("click", function () {
+        BootstrapAlert({
+            type: "confirm",
+            messageText: "hello world",
+            alertType: "info"
+        }).done(function (e) {
+            $("body").append('<div>Callback from confirm ' + e + '</div>');
+        });
+    });
+
+    $("#btnPrompt").on("click", function () {
+        BootstrapAlert({
+            type: "prompt",
+            messageText: "Enter Something",
+            alertType: "primary"
+        }).done(function (e) {
+            BootstrapAlert({
+                messageText: "You entered: " + e,
+                alertType: "success"
+            });
+        });
+    });
+});*/
+/****END Example for bootstrap alert****/
+
+/*END function for Bootstrap alert*/
+
+
+var PROJECTDETAILS = {
+    subtask_detail_url: '',
+    init_page: function () {
+        this.init_accodion_event();
+    },
+    show_loading: function () {
+        //var height = $("#Task-area").outerHeight() + 'px';
+        //var width = $("#Task-area").outerWidth() + 'px';
+        //$("#loadingTaskTableList").height(height);
+        //$("#loadingTaskTableList").width(width);
+        //$(".loading-icon").width(width);
+        //$("#loadingTaskTableList").show();
+        showLoadingBarModal();
+    },
+    hide_loading: function () {
+       // $("#loadingTaskTableList").hide();
+        hideLoadingBarModal();
+    },
+    init_accodion_event: function () {
+
+        $('.accordion').each(function () {
+            $(this).find('.acc-title-task').on("click", function (e) {
+                if (e.target.tagName !== "A" && e.target.tagName !== "I" && e.target.tagName !== "BUTTON") {
+
+                    var thisElement = $(this);
+                    if (thisElement.hasClass('active')) {
+                        thisElement.removeClass('active');
+                        $(thisElement.siblings(".tr-task-data")).hide();
+                    } else {
+
+                        $(thisElement.siblings(".tr-task-data")).hide();
+                        $(thisElement.siblings(".acc-title-task")).removeClass('active');
+
+                        //Call Ajax To Load Task For Each Project
+                        PROJECTDETAILS.show_loading();
+
+                        $.ajax({
+                            url: PROJECTDETAILS.subtask_detail_url,
+                            type: 'get',
+                            data: {
+                                taskId: thisElement.data("id")
+                            },
+                            dataType: 'text',
+                            success: function (result) {
+
+                                if (result.indexOf("AJAXERROR") > -1) {
+                                    MAF.Utils.showError("We can not get sub task for this task now.");
+                                }
+
+                                $(thisElement.closest("tr")).after(result);
+                                thisElement.addClass('active');
+
+                                MAF.XEditable.loadAll($($(thisElement.closest("tr")).closest("tbody")));
+
+                                //Hide Loading
+                                PROJECTDETAILS.hide_loading();
+                            },
+                            error: function () {
+                                MAF.Utils.showError("We can not get sub task for this task now.");
+                                //Hide Loading
+                                PROJECTDETAILS.hide_loading();
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    },
+    Xedit_OnSave: function (id) {
+
+        var ele = $("#" + id);
+        var value = ele.find("option");
+
+        if (value.length >= 2) {
+            var employee = $(ele.find("option")[1]).text();
+
+            ele.empty();
+            ele.text(employee);
+        }
+       
+    }
+}
+
+$(document).ready(function () {
+    if ($(".deleteTaskById").length > 0) {
+        $(".deleteTaskById").click(function () {
+            var deleteButton = $(this);
+            BootstrapAlert({
+                type: "confirm",
+                messageText: "Are you sure you want to delete this task",
+                alertType: "warning"
+            }).done(function (e) {
+                if (e) {
+                    //console.log("confirm delete task " + deleteButton.data("taskid"));
+                    //deleteButton.parent().parent().remove();
+
+                    showLoadingBarModal();
+                    $.ajax({
+                        url: deleteButton.data("deletetaskurl"),
+                        type: 'POST',
+                        data: { TaskId: deleteButton.data("taskid") },
+                        cache: false,
+                        success: function (result) {
+                            //console.log(result);
+                            if (result.status == "success") {
+                                BootstrapAlert({
+                                    messageText: result.message,
+                                    alertType: "success"
+                                }).done(function (e) {
+                                    $("#dashboardLink").find("a")[0].click();
+                                });
+                            } else {
+                                BootstrapAlert({
+                                    messageText: result.message,
+                                    alertType: "danger"
+                                });
+                            }
+                        },
+                        complete: function (e) {
+                            hideLoadingBarModal();
+                            setTimeout(location.reload(), 1000);
+                        }
+                    });
+                } else {
+                    //console.log("cancel delete task " + deleteButton.data("taskid"));
+                }
+            });
+        });
+    }
+});
