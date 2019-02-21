@@ -8,3 +8,5 @@ git status
 git commit -m 'comment'
 
 git log
+
+git push
