@@ -1,0 +1,159 @@
+Cloning into 'test'...
+remote: Enumerating objects: 3, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~
+$ cd Desktop
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop
+$ cd Desktop\Test
+bash: cd: DesktopTest: No such file or directory
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop
+$ cd Test
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test
+$ git clone https://github.com/luongthuanthanh/test.git
+Cloning into 'test'...
+remote: Enumerating objects: 3, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (3/3), done.
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test
+$ git status
+fatal: not a git repository (or any of the parent directories): .git
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test
+$ git add text.txt
+fatal: not a git repository (or any of the parent directories): .git
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test
+$ ^C
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test
+$ git init
+Initialized empty Git repository in C:/Users/TLU04/Desktop/Test/.git/
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test (master)
+$ git add text.txt
+fatal: pathspec 'text.txt' did not match any files
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test (master)
+$ git status
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        test/
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test (master)
+$ git add test/text.text
+fatal: pathspec 'test/text.text' did not match any files
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test (master)
+$ git add test/text.txt
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test (master)
+$ git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+        new file:   test/text.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        test/README.md
+
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test (master)
+$ cd test
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test/test (master)
+$ git add text.txt
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test/test (master)
+$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        new file:   text.txt
+
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test/test (master)
+$ git push
+Everything up-to-date
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test/test (master)
+$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        new file:   text.txt
+
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test/test (master)
+$ git add text.txt
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test/test (master)
+$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        new file:   text.txt
+
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test/test (master)
+$ git commit -m "them file text"
+[master 98017de] them file text
+ 1 file changed, 390 insertions(+)
+ create mode 100644 text.txt
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test/test (master)
+$ git log
+commit 98017de4d7a170c3cd520f8e3cbc07ecdb1b19f4 (HEAD -> master)
+Author: Luong Thu?n Thành <tluong@amaris.com>
+Date:   Thu Feb 21 15:30:01 2019 +0700
+
+    them file text
+
+commit c84d78df7226d6b7dbfc010d584141a78c7ad522 (origin/master, origin/HEAD)
+Author: luongthuanthanh <luongthuanthanh@yahoo.com>
+Date:   Sun Feb 17 21:14:32 2019 +0700
+
+    Initial commit
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test/test (master)
+$ git push
+Enumerating objects: 4, done.
+Counting objects: 100% (4/4), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 3.88 KiB | 1.94 MiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To https://github.com/luongthuanthanh/test.git
+   c84d78d..98017de  master -> master
+
+TLU04@WINDOWS-77S0LM0 MINGW64 ~/Desktop/Test/test (master)
+$
